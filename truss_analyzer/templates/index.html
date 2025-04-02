@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Truss Force Analyzer</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Truss Force Analyzer</h1>
+            <p>Analyze member forces in 2D truss structures under different loading conditions</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="control-panel">
+                <div class="tab-container">
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="nodes-tab">Nodes</button>
+                        <button class="tab-btn" data-tab="members-tab">Members</button>
+                        <button class="tab-btn" data-tab="supports-tab">Supports</button>
+                        <button class="tab-btn" data-tab="loads-tab">Loads</button>
+                    </div>
+                    
+                    <div class="tab-content active" id="nodes-tab">
+                        <h3>Define Nodes</h3>
+                        <div class="input-group">
+                            <input type="text" id="node-id" placeholder="Node ID (e.g., 1)">
+                            <input type="number" id="node-x" placeholder="X Coordinate">
+                            <input type="number" id="node-y" placeholder="Y Coordinate">
+                            <button id="add-node">Add Node</button>
+                        </div>
+                        <div class="data-table">
+                            <h4>Node List</h4>
+                            <table id="node-table">
+                                <thead>
+                                    <tr>
+                                        <th>Node ID</th>
+                                        <th>X Coordinate</th>
+                                        <th>Y Coordinate</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Nodes will be added here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="members-tab">
+                        <h3>Define Members</h3>
+                        <div class="input-group">
+                            <select id="member-node1">
+                                <option value="">Select Node 1</option>
+                                <!-- Options will be added dynamically -->
+                            </select>
+                            <select id="member-node2">
+                                <option value="">Select Node 2</option>
+                                <!-- Options will be added dynamically -->
+                            </select>
+                            <button id="add-member">Add Member</button>
+                        </div>
+                        <div class="data-table">
+                            <h4>Member List</h4>
+                            <table id="member-table">
+                                <thead>
+                                    <tr>
+                                        <th>Member ID</th>
+                                        <th>Node i</th>
+                                        <th>Node j</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Members will be added here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="supports-tab">
+                        <h3>Define Supports</h3>
+                        <div class="input-group">
+                            <select id="support-node">
+                                <option value="">Select Node</option>
+                                <!-- Options will be added dynamically -->
+                            </select>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="support-x" checked>
+                                <label for="support-x">Fix X</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="support-y" checked>
+                                <label for="support-y">Fix Y</label>
+                            </div>
+                            <button id="add-support">Add Support</button>
+                        </div>
+                        <div class="data-table">
+                            <h4>Support List</h4>
+                            <table id="support-table">
+                                <thead>
+                                    <tr>
+                                        <th>Node</th>
+                                        <th>X Fixed</th>
+                                        <th>Y Fixed</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Supports will be added here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content" id="loads-tab">
+                        <h3>Define Loads</h3>
+                        <div class="input-group">
+                            <select id="load-node">
+                                <option value="">Select Node</option>
+                                <!-- Options will be added dynamically -->
+                            </select>
+                            <input type="number" id="load-x" placeholder="Force X">
+                            <input type="number" id="load-y" placeholder="Force Y">
+                            <button id="add-load">Add Load</button>
+                        </div>
+                        <div class="data-table">
+                            <h4>Load List</h4>
+                            <table id="load-table">
+                                <thead>
+                                    <tr>
+                                        <th>Node</th>
+                                        <th>Force X</th>
+                                        <th>Force Y</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Loads will be added here dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button id="analyze-truss" class="primary-btn">Analyze Truss</button>
+                    <button id="clear-truss" class="secondary-btn">Clear All</button>
+                    <button id="load-example" class="secondary-btn">Load Example</button>
+                </div>
+            </div>
+            
+            <div class="visualization">
+                <div class="canvas-container">
+                    <canvas id="truss-canvas"></canvas>
+                </div>
+                
+                <div class="results-panel">
+                    <h3>Analysis Results</h3>
+                    <div class="results-container">
+                        <div class="results-tab-container">
+                            <div class="results-tabs">
+                                <button class="results-tab-btn active" data-tab="member-forces">Member Forces</button>
+                                <button class="results-tab-btn" data-tab="displacements">Displacements</button>
+                            </div>
+                            
+                            <div class="results-tab-content active" id="member-forces">
+                                <table id="forces-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Member</th>
+                                            <th>Force</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Forces will be added here dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="results-tab-content" id="displacements">
+                                <table id="displacement-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Node</th>
+                                            <th>X Displacement</th>
+                                            <th>Y Displacement</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Displacements will be added here dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="../static/js/script.js"></script>
+</body>
+</html>
