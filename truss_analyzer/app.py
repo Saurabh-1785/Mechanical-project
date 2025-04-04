@@ -86,17 +86,23 @@ def analyze_truss(nodes, members, supports, loads):
     free_dofs = []
     fixed_dofs = []
     
-    for node_id, constraint in supports.items():
+    for node_id in nodes:
         dofs = dof_map[node_id]
-        if constraint[0]:  # x fixed
-            fixed_dofs.append(dofs[0])
-        else:
-            free_dofs.append(dofs[0])
+        if node_id in supports:  # x fixed
+            constraint=supports[node_id]
+            if constraint[0]:
+                fixed_dofs.append(dofs[0])
+            else:
+                free_dofs.append(dofs[0])
         
-        if constraint[1]:  # y fixed
-            fixed_dofs.append(dofs[1])
+            if constraint[1]:  # y fixed
+                fixed_dofs.append(dofs[1])
+            else:
+                free_dofs.append(dofs[1])
         else:
-            free_dofs.append(dofs[1])
+            free_dofs.extend(dofs)
+
+    
     
     # Solve for displacements (only for free DOFs)
     K_free = K[np.ix_(free_dofs, free_dofs)]
@@ -141,7 +147,7 @@ def analyze_truss(nodes, members, supports, loads):
         # Using normalized stiffness (EA/L = 1)
         force = delta * EA_L
         
-        member_forces[(node_i, node_j)] = force
+        member_forces[f"{node_i},{ node_j}"] = force
     
     # Return results
     displacements = {}
